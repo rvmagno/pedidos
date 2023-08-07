@@ -3,7 +3,7 @@ import React from "react"
 import { IconeEdicao } from "./Icones"
 
 interface TabelaClientes{
-    clientes: ClienteDB[]
+    clientes: Promise<ClienteDB[]>
     clienteSelecionado?: (cliente: ClienteDB) => void
 }
 
@@ -21,19 +21,18 @@ export default function Tabela(props: TabelaClientes){
     }
 
     function renderContent(){
-        console.log('props.clientes')
-        console.log(props.clientes)
-        return props.clientes?.map((cliente, i) => {
-            return (
-                <tr key={cliente._id} className={`${i %2 === 0 ? 'bg-blue-100' : 'bg-blue-200' }`}>
-                    <td className="p-5 text-black text-left">{cliente.nome}</td>
-                    <td className="p-5 text-black text-left">{cliente.contato}</td>
-                    <td className="p-5 text-black text-left">{cliente.email}</td>
-                    {renderActions(cliente)}
-                </tr>
-            )
-        })
-        
+        return props.clientes.then(
+            cliente => cliente.map((cliente, i) => {
+                return (
+                    <tr key={cliente._id} className={`${i %2 === 0 ? 'bg-blue-100' : 'bg-blue-200' }`}>
+                        <td className="p-5 text-black text-left">{cliente.nome}</td>
+                        <td className="p-5 text-black text-left">{cliente.contato}</td>
+                        <td className="p-5 text-black text-left">{cliente.email}</td>
+                        {renderActions(cliente)}
+                    </tr>
+                )
+            })
+        )
     }
 
     function renderActions(cliente: ClienteDB){
